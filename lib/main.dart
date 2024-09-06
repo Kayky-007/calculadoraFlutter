@@ -9,14 +9,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Center(
-        child: const Calculadora(),
+      theme: ThemeData(
+        primarySwatch: Colors.blueGrey,
+        scaffoldBackgroundColor: Colors.white,
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(fontSize: 18, color: Colors.black54),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueGrey,
+            minimumSize: const Size(70, 70),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            textStyle: const TextStyle(fontSize: 20),
+          ),
+        ),
       ),
+      home: const Calculadora(),
       routes: {
         '/hello': (context) => const Helloworld(),
       },
     );
-    
   }
 }
 
@@ -36,7 +50,6 @@ class CalculadoraState extends State<Calculadora> {
         display = '';
       } else if (valor == '=') {
         display = calcular(display);
-      } else if (valor == 'Calcular') {
       } else {
         display += valor;
       }
@@ -46,8 +59,7 @@ class CalculadoraState extends State<Calculadora> {
   String calcular(String expressao) {
     List<String> partes = expressao.split(RegExp(r'(\+|\-|\*|\/)'));
     double n1 = double.parse(partes[0]);
-    String op =
-        expressao.replaceAll(RegExp(r'\d'), '').trim();
+    String op = expressao.replaceAll(RegExp(r'\d'), '').trim();
     double n2 = double.parse(partes[1]);
 
     switch (op) {
@@ -58,7 +70,11 @@ class CalculadoraState extends State<Calculadora> {
       case '*':
         return (n1 * n2).toString();
       case '/':
-        return (n1 / n2).toString();
+        if (n2 == 0) {
+          return '[Erro] Divisão por zero!';
+        } else {
+          return (n1 / n2).toString();
+        }
       default:
         return expressao;
     }
@@ -69,114 +85,114 @@ class CalculadoraState extends State<Calculadora> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calculadora do Kayky'),
+        backgroundColor: Colors.blueGrey[700],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            alignment: Alignment.centerRight,
-            child: Text(
-              display,
-              style: const TextStyle(fontSize: 24),
-            ),
-          ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () => apertarBotao('7'),
-                child: const Text('7'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('8'),
-                child: const Text('8'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('9'),
-                child: const Text('9'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('/'),
-                child: const Text('/'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () => apertarBotao('4'),
-                child: const Text('4'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('5'),
-                child: const Text('5'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('6'),
-                child: const Text('6'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('*'),
-                child: const Text('*'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () => apertarBotao('1'),
-                child: const Text('1'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('2'),
-                child: const Text('2'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('3'),
-                child: const Text('3'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('-'),
-                child: const Text('-'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () => apertarBotao('0'),
-                child: const Text('0'),
-              ),
-             
-              ElevatedButton(
-                onPressed: () => apertarBotao('C'),
-                child: const Text('C'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('+'),
-                child: const Text('+'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  
-                  Navigator.pushNamed(context, '/hello');
-                }, child: const Text('Calcular'),
-              ),
-              ElevatedButton(
-                onPressed: () => apertarBotao('='),
-                child: const Text(
-                  '=',
-                  style: TextStyle(color: Color.fromARGB(255, 255, 65, 59)),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                alignment: Alignment.centerRight,
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey[50],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  display,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 50),
-          Text('Para calcular clique no botão "=" ')
-        ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildButton('7'),
+                _buildButton('8'),
+                _buildButton('9'),
+                _buildButton('/'),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildButton('4'),
+                _buildButton('5'),
+                _buildButton('6'),
+                _buildButton('*'),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildButton('1'),
+                _buildButton('2'),
+                _buildButton('3'),
+                _buildButton('-'),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildButton('0'),
+                _buildButton('C', backgroundColor: Colors.redAccent),
+                _buildButton('+'),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/hello');
+                  },
+                  child: const Text('Calcular'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    minimumSize: const Size(150, 60),
+                  ),
+                ),
+                _buildButton('=',
+                    textColor: Colors.white, backgroundColor: Colors.green),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Para calcular clique no botão "="',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButton(String label,
+      {Color? backgroundColor, Color? textColor}) {
+    return ElevatedButton(
+      onPressed: () => apertarBotao(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor ?? Colors.blueGrey,
+        minimumSize: const Size(70, 70),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 24,
+          color: textColor ?? Colors.white,
+        ),
       ),
     );
   }
